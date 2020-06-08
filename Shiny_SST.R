@@ -1,7 +1,7 @@
 #
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
+#  Source this script to run the code and view the Shiny app of Bering Sea SST
+#  Date created: June 5 2020
+#  Author: Jordan.Watson@noaa.gov
 
 
 #  Load packages
@@ -37,6 +37,8 @@ mylegy <- 0.865
 mylogox <- 0.045
 mylogoy <- 0.305
 
+#  Pull data from AKFIN using public web API
+#  Create a series of dummy dates (the year 2000 was chosen) that allows all years to be plotted along the same x-axis
 data <- httr::content(httr::GET('https://apex.psmfc.org/akfin/data_marts/akmp/GET_TIME_SERIES_REGIONAL_AVG_TEMPS'), type = "text/csv") %>% 
     rename_all(tolower) %>% 
     mutate(read_date=as.Date(read_date,format="%m/%d/%Y"),
@@ -71,10 +73,7 @@ server <- function(input, output) {
     output$distPlot <- renderPlot({
         # generate bins based on input$bins from ui.R
         
-        #  Query data from public web API 
-        
-        
-        
+
         #  Set year criteria to automatically identify the current and previous years
         current.year <- max(data$year)
         last.year <- current.year-1
