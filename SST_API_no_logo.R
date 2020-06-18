@@ -97,8 +97,13 @@ myplotfun <- function(region1,region2){
   ggdraw(mylines_base)
 }
 
-#png("Z:/SST_Bering_21May20.png",width=6,height=3.375,units="in",res=300)
+jpeg(paste0("SST_Bering_Twitter_",format(Sys.Date(),"%Y_%m_%d"),".jpeg"),width=6,height=4,units="in",quality=100,res=300)
 myplotfun("NBS","EBS")
-#dev.off()
+dev.off()
 
-myplotfun("EGOA","WGOA")
+#myplotfun("EGOA","WGOA")
+
+
+#  Download heatmap of Alaska region
+link = "https://coastwatch.pfeg.noaa.gov/erddap/griddap/jplMURSST41anom1day.largePng?sstAnom%5B(2020-06-15T09:00:00Z)%5D%5B(50.0):(70.0)%5D%5B(-174.99):(-141.0)%5D&.draw=surface&.vars=longitude%7Clatitude%7CsstAnom&.colorBar=%7C%7C%7C%7C%7C&.bgColor=0xffccccff"
+download.file(link,destfile=paste0("Heatmap_",format(Sys.Date(),"%Y_%m_%d"),".png"),mode='wb')
