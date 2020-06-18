@@ -39,7 +39,7 @@ mylegy <- 0.865
 
 #  Specify NOAA logo position coordinates
 mylogox <- 0.045
-mylogoy <- 0.305
+mylogoy <- 0.285
 
 
 #  Query data from public web API 
@@ -107,26 +107,26 @@ myplotfun <- function(region1,region2){
           axis.text = element_text(size=10,family="sans"),
           panel.border=element_rect(colour="black",size=0.75),
           axis.text.x=element_text(color=c("black",NA,NA,"black",NA,NA,"black",NA,NA,"black",NA,NA,NA)),
-          legend.key.size = unit(0.35,"cm")) 
+          legend.key.size = unit(0.35,"cm"),
+          plot.margin=unit(c(0.65,0,0.65,0),"cm")) 
   
   ggdraw(mylines_base) +
     draw_image("fisheries_header_logo_jul2019.png",scale=0.2,x=mylogox,y=mylogoy,hjust=0.35) +
-    annotate("text",x=0.115,y=0.045,label=paste0("Contact: Jordan.Watson@noaa.gov, Alaska Fisheries Science Center, NOAA Fisheries (data: JPL MUR SST, ",format(Sys.Date(),"%m-%d-%Y"),")"),
-             hjust=0.1,size=2.59,family="sans",fontface=2,color=OceansBlue2)
+    #annotate("text",x=0.115,y=0.085,label=paste0("Contact: Jordan.Watson@noaa.gov, Alaska Fisheries Science Center, NOAA Fisheries (data: JPL MUR SST, ",format(Sys.Date(),"%m-%d-%Y"),")"),
+    #         hjust=0.1,size=2.59,family="sans",fontface=2,color=OceansBlue2)
+    annotate("text",x=0.11,y=0.072,label=paste0("Data: JPL MUR SST, courtesy of NOAA Southwest Fisheries and CoastWatch West Coast; coastwatch.pfeg.noaa.gov/erddap\n           Contact: Jordan.Watson@noaa.gov, Alaska Fisheries Science Center, NOAA Fisheries (Updated: ",format(Sys.Date(),"%m-%d-%Y"),")"),
+             hjust=0.1,size=2.57,family="sans",fontface=2,color=OceansBlue2)
 }
 
-png(paste0("figure_output/SST_Twitter_",format(Sys.Date(),"%Y_%m_%d"),".png"),width=6,height=3.375,units="in",res=300)
-myplotfun("NBS","EBS")
-dev.off()
+#png(paste0("figure_output/SST_Twitter_",format(Sys.Date(),"%Y_%m_%d"),".png"),width=6,height=3.375,units="in",res=300)
+#myplotfun("NBS","EBS")
+#dev.off()
 #myplotfun("EGOA","WGOA")
 
-jpeg(paste0("figure_output/SST_Web_",format(Sys.Date(),"%Y_%m_%d"),".jpeg"),width=6,height=4,units="in",quality=100,res=900)
+jpeg(paste0("figure_output/SST_Bering_Twitter_",format(Sys.Date(),"%Y_%m_%d"),".jpeg"),width=6,height=4,units="in",quality=100,res=300)
 myplotfun("NBS","EBS")
 dev.off()
 
-
-
-
-
-
-
+#  Download heatmap of Alaska region
+link = "https://coastwatch.pfeg.noaa.gov/erddap/griddap/jplMURSST41anom1day.largePng?sstAnom%5B(2020-06-15T09:00:00Z)%5D%5B(50.0):(70.0)%5D%5B(-174.99):(-141.0)%5D&.draw=surface&.vars=longitude%7Clatitude%7CsstAnom&.colorBar=%7C%7C%7C%7C%7C&.bgColor=0xffccccff"
+download.file(link,destfile=paste0("Heatmap_",format(Sys.Date(),"%Y_%m_%d"),".png"),mode='wb')
