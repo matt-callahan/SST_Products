@@ -1,4 +1,6 @@
 #
+#  This script currently not working - awaiting changes to webAPI (update: 11/3/2020)
+
 #  Source this script to run the code and view the Shiny app of Bering Sea SST
 #  Date created: June 5 2020
 #  Author: Jordan.Watson@noaa.gov
