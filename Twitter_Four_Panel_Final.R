@@ -14,7 +14,7 @@ library(tidyverse)
 library(lubridate)
 library(cowplot)
 library(magick)
-library(httr)
+#library(httr)
 #library(jsonlite)
 library(heatwaveR)
 library(gridExtra)
@@ -42,6 +42,10 @@ mean.color <- UrchinPurple1
 theme_set(theme_cowplot())
 #--------------------------------------------------------------------------------------------------
 
+#  Define the latest dataset
+latestdata <- "Data/crwsst_bering_19850401_through_110520.RDS"
+
+
 #--------------------------------------------------------------------------------------------------
 #  Create top panel
 #--------------------------------------------------------------------------------------------------
@@ -57,7 +61,7 @@ mylogoy <- 0.285
 #  Query data from public web API 
 #  The WebAPI is currently undergoing updates and is temporarily unavailable. Email the author for the data. 
 data <- #httr::content(httr::GET('https://apex.psmfc.org/akfin/data_marts/akmp/GET_TIME_SERIES_REGIONAL_AVG_TEMPS'), type = "text/csv") %>% 
-  readRDS("Data/crwsst_bering_19850401_through_102520.RDS") %>% 
+  readRDS(latestdata) %>% 
   rename_all(tolower) %>% 
   #right_join(expand.grid(date=seq.Date(as.Date(min(.$date)),as.Date(max(.$date)),"days"), #Run this to get missing data to appear as a gap in the time series
   #                       ecosystem_sub=unique(.$ecosystem_sub))) %>% 
@@ -184,12 +188,12 @@ mytheme <- theme(strip.text = element_text(size=10,color="white",family="sans",f
 
 # Use heatwaveR package to detect marine heatwaves.
 # I run the functions separately for each spatial stratum and then merge. Yeah, ghetto.
-mhw <- (detect_event(ts2clm(readRDS("Data/crwsst_bering_19850401_through_102520.RDS") %>%
+mhw <- (detect_event(ts2clm(readRDS(latestdata) %>%
                               filter(Ecosystem_sub=="Southeastern Bering Sea") %>% 
                               rename(t=date,temp=meansst) %>% 
                               arrange(t), climatologyPeriod = c("1985-12-01", "2015-11-30"))))$clim %>% 
   mutate(region="2020 Southeastern Bering Sea Heatwaves") %>% 
-  bind_rows((detect_event(ts2clm(readRDS("Data/crwsst_bering_19850401_through_102520.RDS") %>%
+  bind_rows((detect_event(ts2clm(readRDS(latestdata) %>%
                                    filter(Ecosystem_sub=="Northern Bering Sea") %>% 
                                    rename(t=date,temp=meansst) %>% 
                                    arrange(t), climatologyPeriod = c("1985-12-01", "2015-11-30"))))$clim %>% 
@@ -247,15 +251,17 @@ p2 <- ggplot(data = clim_cat %>% filter(t>=as.Date("2019-12-01")), aes(x = t, y 
 #dev.off()
 #  Draw figure with text annotations
 p2 <- ggdraw(p2) + 
-  annotate("text",x=0.125,y=0.065,label=paste0("NOAA Coral Reef Watch data, courtesy NOAA CoastWatch West Coast; coastwatch.pfeg.noaa.gov (Updated: ",format(Sys.Date(),"%m-%d-%Y"),")\n        Data are modeled satellite products and periodic discrepancies or gaps may exist across sensors and products.\n                                    Contact: Jordan.Watson@noaa.gov, Alaska Fisheries Science Center "),
-           hjust=0.1,size=2.57,family="sans",fontface=2,color=OceansBlue2)
+  annotate("text",x=0.170,y=0.065,label=paste0("NOAA Coral Reef Watch data, courtesy NOAA CoastWatch West Coast; coastwatch.pfeg.noaa.gov (Updated: ",
+                                               format(max(data$date),"%m-%d-%Y"),
+                                               ")\n        Data are modeled satellite products and periodic discrepancies or gaps may exist across sensors and products.\n                                    Contact: Jordan.Watson@noaa.gov, Alaska Fisheries Science Center "),
+           hjust=0.1,size=2.57,family="sans",fontface=1,color=OceansBlue2,lineheight=0.96)
 
 
 png("SST_4_panel_no_legend.png",width=6,height=6,units="in",res=300)
 grid.arrange(p1,p2,ncol=1)
 dev.off()
 
-jpeg(paste0("SST_4_panel_no_legend",format(max(data$date),"%Y_%m_%d"),".jpeg"),width=6,height=4,units="in",quality=100,res=300)
+jpeg(paste0("SST_4_panel_bering",format(max(data$date),"%Y_%m_%d"),".jpeg"),width=6,height=6,units="in",quality=100,res=180)
 grid.arrange(p1,p2,ncol=1)
 dev.off()
 
